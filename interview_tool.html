@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Tool for Understanding Tech Usage in Older Adults</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        .section-title {
+            font-size: 1.4em;
+            color: #2980b9;
+            margin-bottom: 15px;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .question p {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .response-area {
+            display: none;
+            margin-top: 10px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 60px;
+            margin-bottom: 10px;
+        }
+        .follow-up {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f1f9fe;
+            border-left: 3px solid #3498db;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #ecf0f1;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: #2ecc71;
+            width: 0;
+            transition: width 0.3s;
+        }
+        .hidden {
+            display: none;
+        }
+        #recording-status {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .selected {
+            background-color: #2ecc71;
+        }
+        
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transform: translateY(-100px);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+            z-index: 1000;
+        }
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interview Tool: Tech Usage in Older Adults</h1>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <div id="section-intro" class="section">
+            <div class="section-title">Introduction</div>
+            <p>Thank you for taking the time to speak with me. This interview is about understanding your relationship with technology. I'll be asking about your experiences, challenges, and preferences.</p>
+            <p>Before we begin, I'd like to inform you that I will be recording our conversation for accuracy. Do I have your permission to do so?</p>
+            <div class="question">
+                <button onclick="handleRecordingPermission(true)">Yes</button>
+                <button onclick="handleRecordingPermission(false)">No</button>
+            </div>
+            <div id="recording-status" class="hidden">Recording started</div>
+        </div>
+
+        <div id="section-1" class="section hidden">
+            <div class="section-title">Section 1: General Tech Relationship</div>
+            
+            <div class="question">
+                <p>1. How do you generally feel about using technology in your daily life?</p>
+                <button onclick="showResponseArea('q1-1')">Ask Question</button>
+                <div id="q1-1" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q1-1')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>2. What types of technology do you use most frequently?</p>
+                <button onclick="showResponseArea('q1-2')">Ask Question</button>
+                <div id="q1-2" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q1-2')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>3. How confident do you feel when learning or using new technology?</p>
+                <button onclick="showResponseArea('q1-3')">Ask Question</button>
+                <div id="q1-3" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q1-3')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>4. Do you consider yourself a fast or slow learner when it comes to technology? Why?</p>
+                <button onclick="showResponseArea('q1-4')">Ask Question</button>
+                <div id="q1-4" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="markLearnType('fast')">Fast Learner</button>
+                    <button onclick="markLearnType('slow')">Slow Learner</button>
+                </div>
+                <div id="follow-up-slow" class="follow-up">
+                    <p>What makes it difficult for you to learn new technology?</p>
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('follow-up-slow')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>5. What is your preferred way of learning new technology? (e.g., reading instructions, watching videos, hands-on practice, trial and error, etc.)</p>
+                <button onclick="showResponseArea('q1-5')">Ask Question</button>
+                <div id="q1-5" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q1-5')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button onclick="nextSection('section-2')">Next Section</button>
+            </div>
+        </div>
+        
+        <div id="section-2" class="section hidden">
+            <div class="section-title">Section 2: Positive Tech Experiences (Good Tech)</div>
+            
+            <div class="question">
+                <p>1. Can you name a piece of technology (app, website, device, software, operating system) that you enjoy using?</p>
+                <button onclick="showResponseArea('q2-1')">Ask Question</button>
+                <div id="q2-1" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q2-1')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>2. What do you like about it?</p>
+                <button onclick="showResponseArea('q2-2')">Ask Question</button>
+                <div id="q2-2" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q2-2')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>3. Was it easy to learn, or did it take time to become comfortable with?</p>
+                <button onclick="showResponseArea('q2-3')">Ask Question</button>
+                <div id="q2-3" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q2-3')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>4. What features make it user-friendly for you?</p>
+                <button onclick="showResponseArea('q2-4')">Ask Question</button>
+                <div id="q2-4" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q2-4')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>5. Is there anything you find frustrating or would improve about it?</p>
+                <button onclick="showResponseArea('q2-5')">Ask Question</button>
+                <div id="q2-5" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="markFrustration('yes')">Yes, there are frustrations</button>
+                    <button onclick="markFrustration('no')">No frustrations</button>
+                </div>
+                <div id="follow-up-frustration" class="follow-up">
+                    <p>What specific changes would make it easier for you to use?</p>
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('follow-up-frustration')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button onclick="previousSection('section-1')">Previous Section</button>
+                <button onclick="nextSection('section-3')">Next Section</button>
+            </div>
+        </div>
+        
+        <div id="section-3" class="section hidden">
+            <div class="section-title">Section 3: Negative Tech Experiences (Bad Tech)</div>
+            
+            <div class="question">
+                <p>1. Can you name a piece of technology that you do not enjoy using or struggle with?</p>
+                <button onclick="showResponseArea('q3-1')">Ask Question</button>
+                <div id="q3-1" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q3-1')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>2. What specifically makes it difficult or frustrating for you?</p>
+                <button onclick="showResponseArea('q3-2')">Ask Question</button>
+                <div id="q3-2" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q3-2')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>3. Did you initially dislike it, or did your frustrations develop over time?</p>
+                <button onclick="showResponseArea('q3-3')">Ask Question</button>
+                <div id="q3-3" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q3-3')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>4. Have you tried to work around these difficulties? If so, how?</p>
+                <button onclick="showResponseArea('q3-4')">Ask Question</button>
+                <div id="q3-4" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q3-4')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>5. If you could redesign this technology, what changes would you make?</p>
+                <button onclick="showResponseArea('q3-5')">Ask Question</button>
+                <div id="q3-5" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="markAvoidance('yes')">They avoid using it</button>
+                    <button onclick="markAvoidance('no')">They still use it</button>
+                </div>
+                <div id="follow-up-avoidance" class="follow-up">
+                    <p>What do you use instead, or how do you manage without it?</p>
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('follow-up-avoidance')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button onclick="previousSection('section-2')">Previous Section</button>
+                <button onclick="nextSection('section-4')">Next Section</button>
+            </div>
+        </div>
+        
+        <div id="section-4" class="section hidden">
+            <div class="section-title">Section 4: Emotional and Practical Impact of Technology</div>
+            
+            <div class="question">
+                <p>1. How does it make you feel when you have to learn or use new technology?</p>
+                <button onclick="showResponseArea('q4-1')">Ask Question</button>
+                <div id="q4-1" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q4-1')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>2. What was the best piece of technology you ever used, and why did you like it so much?</p>
+                <button onclick="showResponseArea('q4-2')">Ask Question</button>
+                <div id="q4-2" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q4-2')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>3. What was the worst piece of technology you ever used, and why?</p>
+                <button onclick="showResponseArea('q4-3')">Ask Question</button>
+                <div id="q4-3" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q4-3')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>4. Are there any tools or settings that would make technology more comfortable for you?</p>
+                <button onclick="showResponseArea('q4-4')">Ask Question</button>
+                <div id="q4-4" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="checkAccessibilityConcerns()">Save Response</button>
+                </div>
+                <div id="follow-up-accessibility" class="follow-up">
+                    <p>Have you explored accessibility settings or assistive technologies?</p>
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('follow-up-accessibility')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button onclick="previousSection('section-3')">Previous Section</button>
+                <button onclick="nextSection('section-5')">Next Section</button>
+            </div>
+        </div>
+        
+        <div id="section-5" class="section hidden">
+            <div class="section-title">Section 5: Learning Preferences & Adaptability</div>
+            
+            <div class="question">
+                <p>1. When learning new technology, which do you prefer?</p>
+                <button onclick="showResponseArea('q5-1')">Ask Question</button>
+                <div id="q5-1" class="response-area">
+                    <div class="option-buttons">
+                        <button onclick="selectPreference(this)">Step-by-step tutorials</button>
+                        <button onclick="selectPreference(this)">Written instructions</button>
+                        <button onclick="selectPreference(this)">Illustrated guides</button>
+                        <button onclick="selectPreference(this)">Video tutorials</button>
+                        <button onclick="selectPreference(this)">Live chat support</button>
+                        <button onclick="selectPreference(this)">Online forums</button>
+                        <button onclick="selectPreference(this)">One-on-one in-person training</button>
+                        <button onclick="selectPreference(this)">Group training</button>
+                        <button onclick="selectPreference(this)">Gamified learning</button>
+                    </div>
+                    <textarea id="q5-1-notes" placeholder="Additional notes..."></textarea>
+                    <button onclick="saveResponse('q5-1')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>2. Some tech gradually introduces features, while other tech assumes you already know how to use it. Which approach do you prefer?</p>
+                <button onclick="showResponseArea('q5-2')">Ask Question</button>
+                <div id="q5-2" class="response-area">
+                    <button onclick="selectApproach(this, 'gradual')">Gradual introduction</button>
+                    <button onclick="selectApproach(this, 'assumed')">Assumed knowledge</button>
+                    <textarea placeholder="Record additional details..."></textarea>
+                    <button onclick="saveResponse('q5-2')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <p>3. Have you ever abandoned a technology because it was too complicated or frustrating? What was it?</p>
+                <button onclick="showResponseArea('q5-3')">Ask Question</button>
+                <div id="q5-3" class="response-area">
+                    <textarea placeholder="Record response here..."></textarea>
+                    <button onclick="saveResponse('q5-3')">Save Response</button>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button onclick="previousSection('section-4')">Previous Section</button>
+                <button onclick="nextSection('conclusion')">Go to Conclusion</button>
+            </div>
+        </div>
+        
+        <div id="conclusion" class="section hidden">
+            <div class="section-title">Conclusion</div>
+            <p>Thank you for sharing your experiences. This has been very insightful in understanding how technology could be improved for users like yourself.</p>
+            <p>Do you have any final thoughts on what would make technology easier or more enjoyable for you?</p>
+            <div class="question">
+                <button onclick="showResponseArea('final-thoughts')">Ask Question</button>
+                <div id="final-thoughts" class="response-area">
+                    <textarea placeholder="Record final thoughts here..."></textarea>
+                    <button onclick="saveResponse('final-thoughts')">Save Response</button>
+                </div>
+            </div>
+            
+            <div id="end-recording" class="hidden">
+                <p>End recording and express appreciation for their time.</p>
+                <button onclick="endInterview()">End Interview</button>
+            </div>
+        </div>
+        
+        <div id="interview-complete" class="section hidden">
+            <div class="section-title">Interview Complete</div>
+            <p>The interview has been completed. Thank you!</p>
+            <button onclick="exportResponses()">Export Responses</button>
+        </div>
+    </div>
+    
+    <!-- Notification element -->
+    <div id="notification" class="notification">Response saved successfully!</div>
+
+    <script>
+        let currentSection = 'section-intro';
+        let sections = ['section-intro', 'section-1', 'section-2', 'section-3', 'section-4', 'section-5', 'conclusion', 'interview-complete'];
+        let responses = {};
+        let recording = false;
+        
+        function handleRecordingPermission(granted) {
+            if (granted) {
+                recording = true;
+                document.getElementById('recording-status').classList.remove('hidden');
+            }
+            nextSection('section-1');
+        }
+        
+        function showResponseArea(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+        
+        function saveResponse(id) {
+            const textarea = document.getElementById(id).querySelector('textarea');
+            responses[id] = textarea.value;
+            showNotification();
+        }
+        
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+        
+        function markLearnType(type) {
+            responses['q1-4'] = type;
+            if (type === 'slow') {
+                document.getElementById('follow-up-slow').style.display = 'block';
+            } else {
+                document.getElementById('follow-up-slow').style.display = 'none';
+                saveResponse('q1-4');
+            }
+        }
+        
+        function markFrustration(response) {
+            if (response === 'yes') {
+                document.getElementById('follow-up-frustration').style.display = 'block';
+            } else {
+                document.getElementById('follow-up-frustration').style.display = 'none';
+                saveResponse('q2-5');
+            }
+        }
+        
+        function markAvoidance(response) {
+            if (response === 'yes') {
+                document.getElementById('follow-up-avoidance').style.display = 'block';
+            } else {
+                document.getElementById('follow-up-avoidance').style.display = 'none';
+                saveResponse('q3-5');
+            }
+        }
+        
+        function checkAccessibilityConcerns() {
+            const response = document.getElementById('q4-4').querySelector('textarea').value.toLowerCase();
+            responses['q4-4'] = response;
+            showNotification();
+            
+            if (response.includes('accessibility') || 
+                response.includes('vision') || 
+                response.includes('hearing') || 
+                response.includes('font size') || 
+                response.includes('larger text') ||
+                response.includes('read aloud') ||
+                response.includes('difficulty seeing') ||
+                response.includes('difficulty hearing')) {
+                document.getElementById('follow-up-accessibility').style.display = 'block';
+            } else {
+                document.getElementById('follow-up-accessibility').style.display = 'none';
+            }
+        }
+        
+        function selectPreference(button) {
+            const buttons = button.parentElement.querySelectorAll('button');
+            buttons.forEach(b => b.classList.remove('selected'));
+            button.classList.add('selected');
+            
+            document.getElementById('q5-1-notes').value += button.textContent + ', ';
+        }
+        
+        function selectApproach(button, approach) {
+            const buttons = button.parentElement.querySelectorAll('button');
+            buttons.forEach(b => b.classList.remove('selected'));
+            button.classList.add('selected');
+            
+            responses['preferred_approach'] = approach;
+        }
+        
+        function nextSection(nextId) {
+            document.getElementById(currentSection).classList.add('hidden');
+            document.getElementById(nextId).classList.remove('hidden');
+            currentSection = nextId;
+            updateProgress();
+            
+            if (nextId === 'conclusion') {
+                document.getElementById('end-recording').classList.remove('hidden');
+            }
+        }
+        
+        function previousSection(prevId) {
+            document.getElementById(currentSection).classList.add('hidden');
+            document.getElementById(prevId).classList.remove('hidden');
+            currentSection = prevId;
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const currentIndex = sections.indexOf(currentSection);
+            const progress = Math.floor((currentIndex / (sections.length - 1)) * 100);
+            document.getElementById('progress').style.width = progress + '%';
+        }
+        
+        function endInterview() {
+            if (recording) {
+                recording = false;
+                document.getElementById('recording-status').classList.add('hidden');
+                alert('Recording stopped.');
+            }
+            nextSection('interview-complete');
+        }
+        
+        function exportResponses() {
+            const jsonData = JSON.stringify(responses, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'interview_responses.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('Responses exported as JSON file.');
+        }
+    </script>
+</body>
+</html>
